@@ -1,21 +1,27 @@
 require('dotenv').config();
 const express = require('express');
 const path = require('path');
-const mongoose = require('mongoose');
+const fs = require('fs');
 const { body, validationResult } = require('express-validator');
 const methodOverride = require('method-override');
 
 const app = express();
 
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/fitness-tracker', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-})
-.then(() => console.log('Connected to MongoDB'))
-.catch(err => {
-  console.error('MongoDB connection error:', err);
-  process.exit(1);
-});
+const dataPath = path.join(__dirname, 'data', 'goals.json');
+
+// Function to read goals from JSON file
+function readGoals() {
+    if (!fs.existsSync(dataPath)) {
+        return [];
+    }
+    const data = fs.readFileSync(dataPath);
+    return JSON.parse(data);
+}
+
+// Function to write goals to JSON file
+function writeGoals(goals) {
+    fs.writeFileSync(dataPath, JSON.stringify(goals, null, 2));
+}
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -41,4 +47,6 @@ app.use((err, req, res, next) => {
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, '0.0.0.0')
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+}); 
