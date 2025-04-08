@@ -40,4 +40,9 @@ router.put('/:id',
 // Удаление цели
 router.delete('/:id', goalsController.deleteGoal);
 
-module.exports = router; 
+// Update routes to reflect JSON handling
+router.post('/', goalsController.createGoal);
+router.put('/:id', goalsController.updateGoal);
+router.delete('/:id', goalsController.deleteGoal);
+
+module.exports = router;
