@@ -1,0 +1,19 @@
+doctype html
+html
+  head
+    title= title
+    link(rel='stylesheet', href='/styles/style.css')
+  body
+    header
+      nav
+        ul
+          li
+            a(href='/') Home
+          li
+            a(href='/goals') My Goals
+          li
+            a(href='/goals/new') New Goal
+    main
+      block content
+    footer
+      p &copy; 2024 Fitness Goal Tracker 

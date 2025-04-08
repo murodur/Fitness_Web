@@ -1,0 +1,7 @@
+extends layout
+
+block content
+  .error-container
+    h1 Error
+    p= error.message || 'An error occurred while processing your request'
+    a.button(href='/') Return to Home 

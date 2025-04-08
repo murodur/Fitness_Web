@@ -1,0 +1,40 @@
+extends ../layout
+
+block content
+  .goal-details
+    h1= goal.title
+    
+    .goal-info
+      p.description= goal.description
+      
+      .progress-section
+        h2 Progress
+        .progress-bar
+          .progress(style=`width: ${goal.progress}%`)
+        p.progress-text Progress: #{goal.progress.toFixed(1)}%
+      
+      .details
+        p
+          strong Goal Type: 
+          | #{goal.type}
+        p
+          strong Current Value: 
+          | #{goal.currentValue}
+        p
+          strong Target Value: 
+          | #{goal.targetValue}
+        p
+          strong Target Date: 
+          | #{goal.targetDate.toLocaleDateString()}
+        p
+          strong Created: 
+          | #{goal.createdAt.toLocaleDateString()}
+        p
+          strong Last Updated: 
+          | #{goal.updatedAt.toLocaleDateString()}
+    
+    .goal-actions
+      a.button(href=`/goals/${goal._id}/edit`) Edit
+      form(action=`/goals/${goal._id}?_method=DELETE`, method='POST')
+        button.button(type='submit') Delete
+      a.button(href='/goals') Back to Goals List 

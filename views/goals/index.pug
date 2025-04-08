@@ -1,0 +1,26 @@
+extends ../layout
+
+block content
+  h1 My Fitness Goals
+  a.button(href='/goals/new') Create New Goal
+  
+  if goals && goals.length
+    .goals-list
+      each goal in goals
+        .goal-card
+          h2= goal.title
+          p= goal.description
+          .progress-bar
+            .progress(style=`width: ${goal.progress}%`)
+          .goal-details
+            p Type: #{goal.type}
+            p Current Value: #{goal.currentValue}
+            p Target Value: #{goal.targetValue}
+            p Target Date: #{goal.targetDate.toLocaleDateString()}
+          .goal-actions
+            a.button(href=`/goals/${goal._id}`) Details
+            a.button(href=`/goals/${goal._id}/edit`) Edit
+            form(action=`/goals/${goal._id}?_method=DELETE`, method='POST')
+              button.button(type='submit') Delete
+  else
+    p You don't have any goals yet. Create your first goal! 

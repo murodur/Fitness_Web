@@ -1,0 +1,38 @@
+extends ../layout
+
+block content
+  h1 Create New Goal
+  
+  if errors
+    .errors
+      each error in errors
+        p= error.msg
+  
+  form(action='/goals', method='POST')
+    .form-group
+      label(for='title') Goal Title
+      input#title(type='text', name='title', required, value=goal ? goal.title : '')
+    
+    .form-group
+      label(for='description') Description
+      textarea#description(name='description', required)= goal ? goal.description : ''
+    
+    .form-group
+      label(for='type') Goal Type
+      select#type(name='type', required)
+        option(value='weight') Weight Loss
+        option(value='running') Running
+        option(value='strength') Strength Training
+        option(value='other') Other
+    
+    .form-group
+      label(for='targetDate') Target Date
+      input#targetDate(type='date', name='targetDate', required, value=goal ? goal.targetDate : '')
+    
+    .form-group
+      label(for='targetValue') Target Value
+      input#targetValue(type='number', name='targetValue', required, value=goal ? goal.targetValue : '')
+    
+    .form-actions
+      button.button(type='submit') Create Goal
+      a.button(href='/goals') Cancel 

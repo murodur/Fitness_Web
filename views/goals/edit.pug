@@ -1,0 +1,42 @@
+extends ../layout
+
+block content
+  h1 Edit Goal
+  
+  if errors
+    .errors
+      each error in errors
+        p= error.msg
+  
+  form(action=`/goals/${goal._id}?_method=PUT`, method='POST')
+    .form-group
+      label(for='title') Goal Title
+      input#title(type='text', name='title', required, value=goal.title)
+    
+    .form-group
+      label(for='description') Description
+      textarea#description(name='description', required)= goal.description
+    
+    .form-group
+      label(for='type') Goal Type
+      select#type(name='type', required)
+        option(value='weight', selected=goal.type === 'weight') Weight Loss
+        option(value='running', selected=goal.type === 'running') Running
+        option(value='strength', selected=goal.type === 'strength') Strength Training
+        option(value='other', selected=goal.type === 'other') Other
+    
+    .form-group
+      label(for='targetDate') Target Date
+      input#targetDate(type='date', name='targetDate', required, value=goal.targetDate.toISOString().split('T')[0])
+    
+    .form-group
+      label(for='currentValue') Current Value
+      input#currentValue(type='number', name='currentValue', value=goal.currentValue)
+    
+    .form-group
+      label(for='targetValue') Target Value
+      input#targetValue(type='number', name='targetValue', required, value=goal.targetValue)
+    
+    .form-actions
+      button.button(type='submit') Save Changes
+      a.button(href=`/goals/${goal._id}`) Cancel 
