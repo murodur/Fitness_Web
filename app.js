@@ -1,27 +1,21 @@
 require('dotenv').config();
 const express = require('express');
 const path = require('path');
-const fs = require('fs');
+const mongoose = require('mongoose');
 const { body, validationResult } = require('express-validator');
 const methodOverride = require('method-override');
 
 const app = express();
 
-const dataPath = path.join(__dirname, 'data', 'goals.json');
-
-// Function to read goals from JSON file
-function readGoals() {
-    if (!fs.existsSync(dataPath)) {
-        return [];
-    }
-    const data = fs.readFileSync(dataPath);
-    return JSON.parse(data);
-}
-
-// Function to write goals to JSON file
-function writeGoals(goals) {
-    fs.writeFileSync(dataPath, JSON.stringify(goals, null, 2));
-}
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/fitness-tracker', {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+})
+.then(() => console.log('Connected to MongoDB'))
+.catch(err => {
+  console.error('MongoDB connection error:', err);
+  process.exit(1);
+});
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
