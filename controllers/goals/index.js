@@ -1,12 +1,24 @@
-const goalsService = require('../../services/goals');
+const fs = require('fs');
+const path = require('path');
 const { validationResult } = require('express-validator');
+
+const goalsPath = path.join(__dirname, '../../data/goals.json');
+
+function readGoals() {
+  const data = fs.readFileSync(goalsPath, 'utf8');
+  return JSON.parse(data);
+}
+
+function writeGoals(goals) {
+  fs.writeFileSync(goalsPath, JSON.stringify(goals, null, 2));
+}
 
 exports.getAllGoals = async (req, res) => {
   try {
-    const goals = await goalsService.getAllGoals();
-    res.render('goals/index', { goals });
+    const goals = readGoals();
+    res.json(goals);
   } catch (error) {
-    res.status(500).render('error', { error });
+    res.status(500).json({ error });
   }
 };
 
@@ -16,7 +28,8 @@ exports.getNewGoalForm = (req, res) => {
 
 exports.getEditGoalForm = async (req, res) => {
   try {
-    const goal = await goalsService.getGoalById(req.params.id);
+    const goals = readGoals();
+    const goal = goals.find(g => g.id === parseInt(req.params.id));
     if (!goal) {
       return res.status(404).render('error', { error: 'Goal not found' });
     }
@@ -28,7 +41,8 @@ exports.getEditGoalForm = async (req, res) => {
 
 exports.getGoalById = async (req, res) => {
   try {
-    const goal = await goalsService.getGoalById(req.params.id);
+    const goals = readGoals();
+    const goal = goals.find(g => g.id === parseInt(req.params.id));
     if (!goal) {
       return res.status(404).render('error', { error: 'Goal not found' });
     }
@@ -48,10 +62,13 @@ exports.createGoal = async (req, res) => {
   }
 
   try {
-    const goal = await goalsService.createGoal(req.body);
-    res.redirect(`/goals/${goal._id}`);
+    const goals = readGoals();
+    const newGoal = { ...req.body, id: goals.length + 1 }; // Add an ID
+    goals.push(newGoal);
+    writeGoals(goals);
+    res.status(201).json(newGoal);
   } catch (error) {
-    res.status(500).render('error', { error });
+    res.status(500).json({ error });
   }
 };
 
@@ -60,29 +77,36 @@ exports.updateGoal = async (req, res) => {
   if (!errors.isEmpty()) {
     return res.status(400).render('goals/edit', { 
       errors: errors.array(),
-      goal: { ...req.body, _id: req.params.id }
+      goal: { ...req.body, id: req.params.id }
     });
   }
 
   try {
-    const goal = await goalsService.updateGoal(req.params.id, req.body);
-    if (!goal) {
-      return res.status(404).render('error', { error: 'Goal not found' });
+    const goals = readGoals();
+    const goalIndex = goals.findIndex(g => g.id === parseInt(req.params.id));
+    if (goalIndex === -1) {
+      return res.status(404).json({ message: 'Goal not found' });
     }
-    res.redirect(`/goals/${goal._id}`);
+    const updatedGoal = { ...goals[goalIndex], ...req.body };
+    goals[goalIndex] = updatedGoal;
+    writeGoals(goals);
+    res.json(updatedGoal);
   } catch (error) {
-    res.status(500).render('error', { error });
+    res.status(500).json({ error });
   }
 };
 
 exports.deleteGoal = async (req, res) => {
   try {
-    const goal = await goalsService.deleteGoal(req.params.id);
-    if (!goal) {
-      return res.status(404).render('error', { error: 'Goal not found' });
+    const goals = readGoals();
+    const goalIndex = goals.findIndex(g => g.id === parseInt(req.params.id));
+    if (goalIndex === -1) {
+      return res.status(404).json({ message: 'Goal not found' });
     }
-    res.redirect('/goals');
+    goals.splice(goalIndex, 1);
+    writeGoals(goals);
+    res.status(204).send();
   } catch (error) {
-    res.status(500).render('error', { error });
+    res.status(500).json({ error });
   }
-}; 
+};
