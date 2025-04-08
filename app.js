@@ -7,7 +7,7 @@ const methodOverride = require('method-override');
 
 const app = express();
 
-mongoose.connect(process.env.MONGODB_URI || 'mongodb+srv://<meliyevabbos>:<IeQtgiWsejtfekJy>@cluster0.frnguuj.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0', {
+mongoose.connect(process.env.MONGODB_URI || 'mongodb+srv://atlas-sample-dataset-load-67f54bf8a7af2e32f0a1bc5c:IeQtgiWsejtfekJy@cluster0.frnguuj.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0', {
   useNewUrlParser: true,
   useUnifiedTopology: true
 })
